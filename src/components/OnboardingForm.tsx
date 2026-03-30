@@ -19,11 +19,13 @@ interface OnboardingFormProps {
 }
 
 const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
+  const { user } = useAuth();
+  const authEmail = user?.email || "";
   const [step, setStep] = useState(0);
   const [data, setData] = useState<MemberData>({
     phone_number: "",
     full_name: "",
-    email: "",
+    email: authEmail,
     college_location: "",
     hair_concerns: "",
   });
