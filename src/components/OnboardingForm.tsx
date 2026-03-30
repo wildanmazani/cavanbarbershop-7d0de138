@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/contexts/AuthContext";
 import cavanLogo from "@/assets/cavan-logo.png";
 
 interface MemberData {
@@ -18,11 +19,13 @@ interface OnboardingFormProps {
 }
 
 const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
+  const { user } = useAuth();
+  const authEmail = user?.email || "";
   const [step, setStep] = useState(0);
   const [data, setData] = useState<MemberData>({
     phone_number: "",
     full_name: "",
-    email: "",
+    email: authEmail,
     college_location: "",
     hair_concerns: "",
   });
@@ -135,7 +138,7 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="email" className="text-sm font-medium text-foreground">
-                  Email <span className="text-muted-foreground">(optional)</span>
+                  Email {authEmail ? "" : <span className="text-muted-foreground">(optional)</span>}
                 </Label>
                 <Input
                   id="email"
@@ -144,6 +147,7 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
                   value={data.email}
                   onChange={(e) => update("email", e.target.value)}
                   className="mt-1.5 bg-background"
+                  readOnly={!!authEmail}
                 />
                 {errors.email && (
                   <p className="text-destructive text-xs mt-1">{errors.email}</p>
@@ -151,7 +155,7 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
               </div>
               <div>
                 <Label htmlFor="location" className="text-sm font-medium text-foreground">
-                  College / Location
+                  College / Location <span className="text-muted-foreground">(for outsider)</span>
                 </Label>
                 <Input
                   id="location"
@@ -171,7 +175,7 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="concerns" className="text-sm font-medium text-foreground">
-                  Hair Concerns / Preferences
+                  Hair Concerns / Preferences <span className="text-muted-foreground">(optional)</span>
                 </Label>
                 <Textarea
                   id="concerns"
