@@ -14,10 +14,10 @@ interface StampCardProps {
 }
 
 const MILESTONES: Record<number, { label: string; icon: React.ReactNode; color: string }> = {
-  3: { label: "20% Off", icon: <Sparkles className="w-3.5 h-3.5" />, color: "text-primary" },
-  6: { label: "50% Off", icon: <Crown className="w-3.5 h-3.5" />, color: "text-primary" },
-  9: { label: "Free Cut", icon: <Scissors className="w-3.5 h-3.5" />, color: "text-primary" },
-  12: { label: "Free Scalp", icon: <Gift className="w-3.5 h-3.5" />, color: "text-primary" },
+  3: { label: "10% Off", icon: <Sparkles className="w-3.5 h-3.5" />, color: "text-primary" },
+  6: { label: "20% Off", icon: <Crown className="w-3.5 h-3.5" />, color: "text-primary" },
+  9: { label: "30%", icon: <Scissors className="w-3.5 h-3.5" />, color: "text-primary" },
+  12: { label: "50%", icon: <Gift className="w-3.5 h-3.5" />, color: "text-primary" },
 };
 
 const StampCard = ({ memberName, stampsCount, onStampAdded, avatarUrl }: StampCardProps) => {
