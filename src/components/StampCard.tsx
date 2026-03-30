@@ -3,7 +3,7 @@ import { Check, Crown, Scissors, Sparkles, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import PinModal from "@/components/PinModal";
-import cavanLogo from "@/assets/cavan-logo.png";
+
 
 interface StampCardProps {
   memberName: string;
