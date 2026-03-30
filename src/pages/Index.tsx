@@ -62,6 +62,38 @@ const Index = () => {
   }) => {
     if (!user) return;
 
+    // First check if a member with this phone already exists (from pre-auth era)
+    const { data: existing } = await supabase
+      .from("members")
+      .select("*")
+      .eq("phone_number", data.phone_number)
+      .maybeSingle();
+
+    if (existing) {
+      // Claim the existing record by setting user_id
+      const { data: updated, error } = await supabase
+        .from("members")
+        .update({
+          user_id: user.id,
+          full_name: data.full_name,
+          email: data.email || null,
+          college_location: data.college_location,
+          hair_concerns: data.hair_concerns || null,
+        })
+        .eq("id", existing.id)
+        .select()
+        .single();
+
+      if (error) {
+        toast.error("Failed to link your account. Please try again.");
+        console.error(error);
+        return;
+      }
+      setMember(updated as Member);
+      toast.info("Welcome back! Your card has been loaded. 🎉");
+      return;
+    }
+
     const { data: inserted, error } = await supabase
       .from("members")
       .insert({
@@ -76,13 +108,8 @@ const Index = () => {
       .single();
 
     if (error) {
-      if (error.code === "23505") {
-        await fetchMember();
-        toast.info("Welcome back! Your card has been loaded.");
-      } else {
-        toast.error("Registration failed. Please try again.");
-        console.error(error);
-      }
+      toast.error("Registration failed. Please try again.");
+      console.error(error);
       return;
     }
 
