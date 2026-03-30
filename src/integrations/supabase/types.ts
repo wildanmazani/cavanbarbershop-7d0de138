@@ -14,8 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      favourite_haircuts: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          notes: string | null
+          title: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url: string
+          notes?: string | null
+          title?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          notes?: string | null
+          title?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       members: {
         Row: {
+          avatar_url: string | null
           college_location: string
           created_at: string
           email: string | null
@@ -23,10 +51,14 @@ export type Database = {
           hair_concerns: string | null
           id: string
           phone_number: string
+          points_balance: number
+          referral_code: string | null
           stamps_count: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
+          avatar_url?: string | null
           college_location: string
           created_at?: string
           email?: string | null
@@ -34,10 +66,14 @@ export type Database = {
           hair_concerns?: string | null
           id?: string
           phone_number: string
+          points_balance?: number
+          referral_code?: string | null
           stamps_count?: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
+          avatar_url?: string | null
           college_location?: string
           created_at?: string
           email?: string | null
@@ -45,10 +81,78 @@ export type Database = {
           hair_concerns?: string | null
           id?: string
           phone_number?: string
+          points_balance?: number
+          referral_code?: string | null
           stamps_count?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
+      }
+      referrals: {
+        Row: {
+          bonus_points: number | null
+          created_at: string
+          id: string
+          referred_email: string
+          referred_id: string | null
+          referrer_id: string
+          status: string | null
+        }
+        Insert: {
+          bonus_points?: number | null
+          created_at?: string
+          id?: string
+          referred_email: string
+          referred_id?: string | null
+          referrer_id: string
+          status?: string | null
+        }
+        Update: {
+          bonus_points?: number | null
+          created_at?: string
+          id?: string
+          referred_email?: string
+          referred_id?: string | null
+          referrer_id?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
+      visits: {
+        Row: {
+          id: string
+          member_id: string
+          notes: string | null
+          points_earned: number | null
+          service: string
+          visited_at: string
+        }
+        Insert: {
+          id?: string
+          member_id: string
+          notes?: string | null
+          points_earned?: number | null
+          service?: string
+          visited_at?: string
+        }
+        Update: {
+          id?: string
+          member_id?: string
+          notes?: string | null
+          points_earned?: number | null
+          service?: string
+          visited_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visits_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

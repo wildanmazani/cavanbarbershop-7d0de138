@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import OnboardingForm from "@/components/OnboardingForm";
 import StampCard from "@/components/StampCard";
+import BottomNav, { TabKey } from "@/components/BottomNav";
+import ProfilePage from "@/components/ProfilePage";
+import FavouritesPage from "@/components/FavouritesPage";
+import LoyaltyPage from "@/components/LoyaltyPage";
 import { toast } from "sonner";
 
 interface Member {
@@ -12,36 +17,38 @@ interface Member {
   college_location: string;
   hair_concerns: string | null;
   stamps_count: number;
+  avatar_url: string | null;
+  points_balance: number;
+  referral_code: string | null;
 }
 
 const Index = () => {
+  const { user } = useAuth();
   const [member, setMember] = useState<Member | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<TabKey>("home");
 
   useEffect(() => {
-    // Check if a member session exists in localStorage (just the phone for lookup)
-    const phone = localStorage.getItem("cavan_phone");
-    if (phone) {
-      fetchMember(phone);
+    if (user) {
+      fetchMember();
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
-  const fetchMember = async (phone: string) => {
+  const fetchMember = async () => {
+    if (!user) return;
     const { data, error } = await supabase
       .from("members")
       .select("*")
-      .eq("phone_number", phone)
+      .eq("user_id", user.id)
       .maybeSingle();
 
     if (error) {
-      toast.error("Failed to load your card");
+      toast.error("Failed to load your profile");
       console.error(error);
     } else if (data) {
-      setMember(data);
-    } else {
-      localStorage.removeItem("cavan_phone");
+      setMember(data as Member);
     }
     setLoading(false);
   };
@@ -53,9 +60,12 @@ const Index = () => {
     college_location: string;
     hair_concerns: string;
   }) => {
+    if (!user) return;
+
     const { data: inserted, error } = await supabase
       .from("members")
       .insert({
+        user_id: user.id,
         phone_number: data.phone_number,
         full_name: data.full_name,
         email: data.email || null,
@@ -67,9 +77,7 @@ const Index = () => {
 
     if (error) {
       if (error.code === "23505") {
-        // Duplicate phone — fetch existing member
-        await fetchMember(data.phone_number);
-        localStorage.setItem("cavan_phone", data.phone_number);
+        await fetchMember();
         toast.info("Welcome back! Your card has been loaded.");
       } else {
         toast.error("Registration failed. Please try again.");
@@ -78,18 +86,19 @@ const Index = () => {
       return;
     }
 
-    localStorage.setItem("cavan_phone", data.phone_number);
-    setMember(inserted);
+    setMember(inserted as Member);
     toast.success("Welcome to Cavan! 🎉");
   };
 
   const handleStampAdded = async () => {
-    if (!member) return;
+    if (!member || !user) return;
 
-    const newCount = member.stamps_count + 1;
+    const newStamps = member.stamps_count + 1;
+    const newPoints = member.points_balance + 10;
+
     const { error } = await supabase
       .from("members")
-      .update({ stamps_count: newCount })
+      .update({ stamps_count: newStamps, points_balance: newPoints })
       .eq("id", member.id);
 
     if (error) {
@@ -98,12 +107,14 @@ const Index = () => {
       return;
     }
 
-    setMember({ ...member, stamps_count: newCount });
-  };
+    // Also record the visit
+    await supabase.from("visits").insert({
+      member_id: member.id,
+      service: "Haircut",
+      points_earned: 10,
+    });
 
-  const handleLogout = () => {
-    localStorage.removeItem("cavan_phone");
-    setMember(null);
+    setMember({ ...member, stamps_count: newStamps, points_balance: newPoints });
   };
 
   if (loading) {
@@ -119,12 +130,31 @@ const Index = () => {
   }
 
   return (
-    <StampCard
-      memberName={member.full_name}
-      stampsCount={member.stamps_count}
-      onStampAdded={handleStampAdded}
-      onLogout={handleLogout}
-    />
+    <div className="min-h-screen bg-background">
+      {activeTab === "home" && (
+        <StampCard
+          memberName={member.full_name}
+          stampsCount={member.stamps_count}
+          onStampAdded={handleStampAdded}
+          onLogout={() => {}} // Logout moved to profile
+          avatarUrl={member.avatar_url}
+        />
+      )}
+      {activeTab === "favourites" && <FavouritesPage />}
+      {activeTab === "loyalty" && (
+        <LoyaltyPage
+          member={member}
+          onMemberUpdate={(updated) => setMember({ ...member, ...updated })}
+        />
+      )}
+      {activeTab === "profile" && (
+        <ProfilePage
+          member={member}
+          onUpdate={(updated) => setMember(updated)}
+        />
+      )}
+      <BottomNav active={activeTab} onChange={setActiveTab} />
+    </div>
   );
 };
 

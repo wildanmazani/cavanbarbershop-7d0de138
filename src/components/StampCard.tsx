@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Check, Crown, Scissors, Sparkles, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import PinModal from "@/components/PinModal";
-import cavanLogo from "@/assets/cavan-logo.png";
+
 
 interface StampCardProps {
   memberName: string;
   stampsCount: number;
   onStampAdded: () => void;
-  onLogout: () => void;
+  onLogout?: () => void;
+  avatarUrl?: string | null;
 }
 
 const MILESTONES: Record<number, { label: string; icon: React.ReactNode; color: string }> = {
@@ -18,7 +20,7 @@ const MILESTONES: Record<number, { label: string; icon: React.ReactNode; color: 
   12: { label: "Free Scalp", icon: <Gift className="w-3.5 h-3.5" />, color: "text-primary" },
 };
 
-const StampCard = ({ memberName, stampsCount, onStampAdded, onLogout }: StampCardProps) => {
+const StampCard = ({ memberName, stampsCount, onStampAdded, avatarUrl }: StampCardProps) => {
   const [showPin, setShowPin] = useState(false);
   const displayStamps = stampsCount % 12;
 
@@ -28,19 +30,19 @@ const StampCard = ({ memberName, stampsCount, onStampAdded, onLogout }: StampCar
   return (
     <div className="min-h-screen flex flex-col px-4 py-6 max-w-md mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <img src={cavanLogo} alt="Cavan" width={44} height={44} />
-          <div>
-            <p className="text-xs text-muted-foreground">Welcome back,</p>
-            <p className="font-display font-semibold text-foreground text-lg leading-tight">
-              {memberName}
-            </p>
-          </div>
+      <div className="flex items-center gap-3 mb-6">
+        <Avatar className="w-11 h-11 border-2 border-primary/20">
+          <AvatarImage src={avatarUrl || undefined} />
+          <AvatarFallback className="font-display bg-primary/10 text-primary text-sm">
+            {memberName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <p className="text-xs text-muted-foreground">Welcome back,</p>
+          <p className="font-display font-semibold text-foreground text-lg leading-tight">
+            {memberName}
+          </p>
         </div>
-        <Button variant="ghost" size="sm" onClick={onLogout} className="text-muted-foreground text-xs">
-          Logout
-        </Button>
       </div>
 
       {/* Next Reward Banner */}
