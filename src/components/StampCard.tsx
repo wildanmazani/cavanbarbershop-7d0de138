@@ -20,7 +20,7 @@ const MILESTONES: Record<number, { label: string; icon: React.ReactNode; color: 
   12: { label: "Free Scalp", icon: <Gift className="w-3.5 h-3.5" />, color: "text-primary" },
 };
 
-const StampCard = ({ memberName, stampsCount, onStampAdded, onLogout }: StampCardProps) => {
+const StampCard = ({ memberName, stampsCount, onStampAdded, avatarUrl }: StampCardProps) => {
   const [showPin, setShowPin] = useState(false);
   const displayStamps = stampsCount % 12;
 
