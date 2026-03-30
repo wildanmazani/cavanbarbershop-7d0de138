@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-const MERCHANT_PIN = "1234";
+const MERCHANT_PIN = "1346";
 
 interface PinModalProps {
   open: boolean;
