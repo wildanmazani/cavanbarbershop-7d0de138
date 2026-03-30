@@ -163,7 +163,7 @@ const LoyaltyPage = ({ member, onMemberUpdate }: LoyaltyPageProps) => {
             </div>
           ))}
           <p className="text-[11px] text-muted-foreground pt-2">
-            Earn 10 pts per visit • 50 pts per referral
+            Earn 10 pts per visit • 25 pts per referral
           </p>
         </div>
       )}
