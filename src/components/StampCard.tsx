@@ -28,7 +28,7 @@ const StampCard = ({ memberName, stampsCount, onStampAdded, avatarUrl }: StampCa
   const stampsToNext = nextMilestone - displayStamps;
 
   return (
-    <div className="min-h-screen flex flex-col px-4 py-6 max-w-md mx-auto">
+    <div className="min-h-screen flex flex-col px-4 pt-6 pb-32 max-w-md mx-auto"
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Avatar className="w-11 h-11 border-2 border-primary/20">
