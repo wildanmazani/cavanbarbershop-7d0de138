@@ -30,19 +30,19 @@ const StampCard = ({ memberName, stampsCount, onStampAdded, avatarUrl }: StampCa
   return (
     <div className="min-h-screen flex flex-col px-4 py-6 max-w-md mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <img src={cavanLogo} alt="Cavan" width={44} height={44} />
-          <div>
-            <p className="text-xs text-muted-foreground">Welcome back,</p>
-            <p className="font-display font-semibold text-foreground text-lg leading-tight">
-              {memberName}
-            </p>
-          </div>
+      <div className="flex items-center gap-3 mb-6">
+        <Avatar className="w-11 h-11 border-2 border-primary/20">
+          <AvatarImage src={avatarUrl || undefined} />
+          <AvatarFallback className="font-display bg-primary/10 text-primary text-sm">
+            {memberName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <p className="text-xs text-muted-foreground">Welcome back,</p>
+          <p className="font-display font-semibold text-foreground text-lg leading-tight">
+            {memberName}
+          </p>
         </div>
-        <Button variant="ghost" size="sm" onClick={onLogout} className="text-muted-foreground text-xs">
-          Logout
-        </Button>
       </div>
 
       {/* Next Reward Banner */}
