@@ -138,7 +138,7 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="email" className="text-sm font-medium text-foreground">
-                  Email <span className="text-muted-foreground">(optional)</span>
+                  Email {authEmail ? "" : <span className="text-muted-foreground">(optional)</span>}
                 </Label>
                 <Input
                   id="email"
@@ -154,7 +154,7 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
               </div>
               <div>
                 <Label htmlFor="location" className="text-sm font-medium text-foreground">
-                  College / Location
+                  College / Location <span className="text-muted-foreground">(for outsider)</span>
                 </Label>
                 <Input
                   id="location"
@@ -174,7 +174,7 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="concerns" className="text-sm font-medium text-foreground">
-                  Hair Concerns / Preferences
+                  Hair Concerns / Preferences <span className="text-muted-foreground">(optional)</span>
                 </Label>
                 <Textarea
                   id="concerns"
