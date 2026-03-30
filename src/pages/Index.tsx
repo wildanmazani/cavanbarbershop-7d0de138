@@ -1,16 +1,61 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from "react";
+import OnboardingForm from "@/components/OnboardingForm";
+import StampCard from "@/components/StampCard";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+interface Member {
+  phone_number: string;
+  full_name: string;
+  email: string;
+  college_location: string;
+  hair_concerns: string;
+  stamps_count: number;
+}
+
+const Index = () => {
+  const [member, setMember] = useState<Member | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("cavan_member");
+    if (saved) {
+      try {
+        setMember(JSON.parse(saved));
+      } catch {
+        localStorage.removeItem("cavan_member");
+      }
+    }
+  }, []);
+
+  const saveMember = (m: Member) => {
+    setMember(m);
+    localStorage.setItem("cavan_member", JSON.stringify(m));
+  };
+
+  const handleOnboardingComplete = (data: Omit<Member, "stamps_count">) => {
+    saveMember({ ...data, stamps_count: 0 });
+  };
+
+  const handleStampAdded = () => {
+    if (!member) return;
+    saveMember({ ...member, stamps_count: member.stamps_count + 1 });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("cavan_member");
+    setMember(null);
+  };
+
+  if (!member) {
+    return <OnboardingForm onComplete={handleOnboardingComplete} />;
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
+    <StampCard
+      memberName={member.full_name}
+      stampsCount={member.stamps_count}
+      onStampAdded={handleStampAdded}
+      onLogout={handleLogout}
+    />
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
