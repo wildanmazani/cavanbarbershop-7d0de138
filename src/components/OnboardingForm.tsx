@@ -147,6 +147,7 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
                   value={data.email}
                   onChange={(e) => update("email", e.target.value)}
                   className="mt-1.5 bg-background"
+                  readOnly={!!authEmail}
                 />
                 {errors.email && (
                   <p className="text-destructive text-xs mt-1">{errors.email}</p>
