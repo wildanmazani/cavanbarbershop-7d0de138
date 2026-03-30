@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Home, Heart, Trophy, User } from "lucide-react";
 
 export type TabKey = "home" | "favourites" | "loyalty" | "profile";
@@ -14,8 +15,8 @@ const tabs: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: "profile", label: "Profile", icon: <User className="w-5 h-5" /> },
 ];
 
-const BottomNav = ({ active, onChange }: BottomNavProps) => (
-  <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
+const BottomNav = forwardRef<HTMLElement, BottomNavProps>(({ active, onChange }, ref) => (
+  <nav ref={ref} className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
     <div className="max-w-md mx-auto flex">
       {tabs.map((tab) => (
         <button
@@ -33,6 +34,8 @@ const BottomNav = ({ active, onChange }: BottomNavProps) => (
       ))}
     </div>
   </nav>
-);
+));
+
+BottomNav.displayName = "BottomNav";
 
 export default BottomNav;

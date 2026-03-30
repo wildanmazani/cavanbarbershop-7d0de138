@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, forwardRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,60 +17,60 @@ interface PinModalProps {
   onSuccess: () => void;
 }
 
-const PinModal = ({ open, onClose, onSuccess }: PinModalProps) => {
-  const [pin, setPin] = useState(["", "", "", ""]);
-  const [error, setError] = useState(false);
-  const refs = [
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-  ];
+const PinModalContent = forwardRef<HTMLDivElement, PinModalProps>(
+  ({ open, onClose, onSuccess }, ref) => {
+    const [pin, setPin] = useState(["", "", "", ""]);
+    const [error, setError] = useState(false);
+    const refs = [
+      useRef<HTMLInputElement>(null),
+      useRef<HTMLInputElement>(null),
+      useRef<HTMLInputElement>(null),
+      useRef<HTMLInputElement>(null),
+    ];
 
-  useEffect(() => {
-    if (open) {
-      setPin(["", "", "", ""]);
+    useEffect(() => {
+      if (open) {
+        setPin(["", "", "", ""]);
+        setError(false);
+        setTimeout(() => refs[0].current?.focus(), 100);
+      }
+    }, [open]);
+
+    const handleInput = (index: number, value: string) => {
+      if (!/^\d*$/.test(value)) return;
+      const newPin = [...pin];
+      newPin[index] = value.slice(-1);
+      setPin(newPin);
       setError(false);
-      setTimeout(() => refs[0].current?.focus(), 100);
-    }
-  }, [open]);
 
-  const handleInput = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return;
-    const newPin = [...pin];
-    newPin[index] = value.slice(-1);
-    setPin(newPin);
-    setError(false);
+      if (value && index < 3) {
+        refs[index + 1].current?.focus();
+      }
+    };
 
-    if (value && index < 3) {
-      refs[index + 1].current?.focus();
-    }
-  };
+    const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+      if (e.key === "Backspace" && !pin[index] && index > 0) {
+        refs[index - 1].current?.focus();
+      }
+    };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !pin[index] && index > 0) {
-      refs[index - 1].current?.focus();
-    }
-  };
+    const submit = () => {
+      const entered = pin.join("");
+      if (entered.length < 4) return;
 
-  const submit = () => {
-    const entered = pin.join("");
-    if (entered.length < 4) return;
+      if (entered === MERCHANT_PIN) {
+        onSuccess();
+        onClose();
+        toast.success("Stamp added! ✨");
+      } else {
+        setError(true);
+        setPin(["", "", "", ""]);
+        refs[0].current?.focus();
+      }
+    };
 
-    if (entered === MERCHANT_PIN) {
-      onSuccess();
-      onClose();
-      toast.success("Stamp added! ✨");
-    } else {
-      setError(true);
-      setPin(["", "", "", ""]);
-      refs[0].current?.focus();
-    }
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-xs mx-auto rounded-2xl">
+    return (
+      <div ref={ref}>
         <DialogHeader>
           <DialogTitle className="font-display text-center">Merchant PIN</DialogTitle>
           <DialogDescription className="text-center text-sm">
@@ -107,9 +107,19 @@ const PinModal = ({ open, onClose, onSuccess }: PinModalProps) => {
         <Button onClick={submit} className="w-full py-5 font-semibold rounded-xl">
           Confirm
         </Button>
-      </DialogContent>
-    </Dialog>
-  );
-};
+      </div>
+    );
+  }
+);
+
+PinModalContent.displayName = "PinModalContent";
+
+const PinModal = ({ open, onClose, onSuccess }: PinModalProps) => (
+  <Dialog open={open} onOpenChange={onClose}>
+    <DialogContent className="max-w-xs mx-auto rounded-2xl">
+      <PinModalContent open={open} onClose={onClose} onSuccess={onSuccess} />
+    </DialogContent>
+  </Dialog>
+);
 
 export default PinModal;
