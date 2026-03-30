@@ -139,7 +139,7 @@ const StampCard = ({ memberName, stampsCount, onStampAdded, avatarUrl }: StampCa
       {/* Add Stamp Button */}
       <Button
         onClick={() => setShowPin(true)}
-        className="w-full py-6 text-base font-semibold rounded-xl mt-auto"
+        className="w-full py-6 text-base font-semibold rounded-xl mt-auto mb-10"
       >
         Add Stamp
       </Button>
