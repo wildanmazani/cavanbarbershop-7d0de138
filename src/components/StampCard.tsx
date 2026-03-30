@@ -8,7 +8,8 @@ interface StampCardProps {
   memberName: string;
   stampsCount: number;
   onStampAdded: () => void;
-  onLogout: () => void;
+  onLogout?: () => void;
+  avatarUrl?: string | null;
 }
 
 const MILESTONES: Record<number, { label: string; icon: React.ReactNode; color: string }> = {
