@@ -12,6 +12,7 @@ interface MemberData {
   email: string;
   college_location: string;
   hair_concerns: string;
+  referral_code_input: string;
 }
 
 interface OnboardingFormProps {
@@ -21,13 +22,15 @@ interface OnboardingFormProps {
 const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
   const { user } = useAuth();
   const authEmail = user?.email || "";
+  const authPhone = user?.phone || "";
   const [step, setStep] = useState(0);
   const [data, setData] = useState<MemberData>({
-    phone_number: "",
+    phone_number: authPhone,
     full_name: "",
     email: authEmail,
     college_location: "",
     hair_concerns: "",
+    referral_code_input: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -59,12 +62,11 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
     else onComplete(data);
   };
 
-  const steps = ["Personal Info", "Details", "Hair Profile"];
+  const steps = ["Personal Info", "Details", "Hair & Referral"];
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="flex justify-center mb-6">
           <img src={cavanLogo} alt="Cavan Barbershop" width={140} height={140} />
         </div>
@@ -126,6 +128,7 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
                   value={data.phone_number}
                   onChange={(e) => update("phone_number", e.target.value)}
                   className="mt-1.5 bg-background"
+                  readOnly={!!authPhone}
                 />
                 {errors.phone_number && (
                   <p className="text-destructive text-xs mt-1">{errors.phone_number}</p>
@@ -138,7 +141,7 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="email" className="text-sm font-medium text-foreground">
-                  Email {authEmail ? "" : <span className="text-muted-foreground">(optional)</span>}
+                  Email {!authEmail && <span className="text-muted-foreground">(optional)</span>}
                 </Label>
                 <Input
                   id="email"
@@ -184,6 +187,22 @@ const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
                   onChange={(e) => update("hair_concerns", e.target.value)}
                   className="mt-1.5 bg-background min-h-[100px] resize-none"
                 />
+              </div>
+              <div>
+                <Label htmlFor="referral" className="text-sm font-medium text-foreground">
+                  Referral Code <span className="text-muted-foreground">(optional)</span>
+                </Label>
+                <Input
+                  id="referral"
+                  placeholder="e.g. AB12CD34"
+                  value={data.referral_code_input}
+                  onChange={(e) => update("referral_code_input", e.target.value.toUpperCase())}
+                  className="mt-1.5 bg-background uppercase"
+                  maxLength={8}
+                />
+                <p className="text-muted-foreground text-[11px] mt-1">
+                  Got a code from a friend? Enter it to earn bonus points!
+                </p>
               </div>
             </div>
           )}

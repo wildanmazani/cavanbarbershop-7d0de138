@@ -7,6 +7,7 @@ import BottomNav, { TabKey } from "@/components/BottomNav";
 import ProfilePage from "@/components/ProfilePage";
 import FavouritesPage from "@/components/FavouritesPage";
 import LoyaltyPage from "@/components/LoyaltyPage";
+import PromoBanner from "@/components/PromoBanner";
 import { toast } from "sonner";
 
 interface Member {
@@ -53,12 +54,52 @@ const Index = () => {
     setLoading(false);
   };
 
+  const handleReferral = async (referralCode: string, newMemberId: string) => {
+    if (!referralCode || !user) return;
+
+    // Find the referrer by their referral_code
+    const { data: referrer } = await supabase
+      .from("members")
+      .select("id, user_id, points_balance")
+      .eq("referral_code", referralCode)
+      .maybeSingle();
+
+    if (!referrer || !referrer.user_id) return;
+
+    // Don't allow self-referral
+    if (referrer.user_id === user.id) return;
+
+    // Create the referral record
+    await supabase.from("referrals").insert({
+      referrer_id: referrer.user_id,
+      referred_id: user.id,
+      referred_email: user.email || user.phone || "",
+      status: "completed",
+      bonus_points: 50,
+    });
+
+    // Award points to referrer
+    await supabase
+      .from("members")
+      .update({ points_balance: referrer.points_balance + 50 })
+      .eq("id", referrer.id);
+
+    // Award points to new member
+    await supabase
+      .from("members")
+      .update({ points_balance: 50 })
+      .eq("id", newMemberId);
+
+    toast.success("Referral bonus applied! +50 points 🎉");
+  };
+
   const handleOnboardingComplete = async (data: {
     phone_number: string;
     full_name: string;
     email: string;
     college_location: string;
     hair_concerns: string;
+    referral_code_input: string;
   }) => {
     if (!user) return;
 
@@ -70,7 +111,6 @@ const Index = () => {
       .maybeSingle();
 
     if (existing) {
-      // Claim the existing record by setting user_id
       const { data: updated, error } = await supabase
         .from("members")
         .update({
@@ -90,6 +130,9 @@ const Index = () => {
         return;
       }
       setMember(updated as Member);
+      if (data.referral_code_input) {
+        await handleReferral(data.referral_code_input, existing.id);
+      }
       toast.info("Welcome back! Your card has been loaded. 🎉");
       return;
     }
@@ -114,6 +157,18 @@ const Index = () => {
     }
 
     setMember(inserted as Member);
+
+    if (data.referral_code_input) {
+      await handleReferral(data.referral_code_input, inserted.id);
+      // Refresh member to get updated points
+      const { data: refreshed } = await supabase
+        .from("members")
+        .select("*")
+        .eq("id", inserted.id)
+        .single();
+      if (refreshed) setMember(refreshed as Member);
+    }
+
     toast.success("Welcome to Cavan! 🎉");
   };
 
@@ -134,7 +189,6 @@ const Index = () => {
       return;
     }
 
-    // Also record the visit
     await supabase.from("visits").insert({
       member_id: member.id,
       service: "Haircut",
@@ -159,13 +213,22 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {activeTab === "home" && (
-        <StampCard
-          memberName={member.full_name}
-          stampsCount={member.stamps_count}
-          onStampAdded={handleStampAdded}
-          onLogout={() => {}} // Logout moved to profile
-          avatarUrl={member.avatar_url}
-        />
+        <>
+          <StampCard
+            memberName={member.full_name}
+            stampsCount={member.stamps_count}
+            onStampAdded={handleStampAdded}
+            onLogout={() => {}}
+            avatarUrl={member.avatar_url}
+          />
+          <div className="px-4 max-w-md mx-auto -mt-24 pb-32">
+            <PromoBanner
+              title="🎉 New Member Promo!"
+              description="Sign up as a Cavan member and enjoy RM5 OFF any service on your first visit!"
+              highlight="RM5 OFF — Any Service"
+            />
+          </div>
+        </>
       )}
       {activeTab === "favourites" && <FavouritesPage />}
       {activeTab === "loyalty" && (
