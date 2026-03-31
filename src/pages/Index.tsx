@@ -7,7 +7,7 @@ import BottomNav, { TabKey } from "@/components/BottomNav";
 import ProfilePage from "@/components/ProfilePage";
 import FavouritesPage from "@/components/FavouritesPage";
 import LoyaltyPage from "@/components/LoyaltyPage";
-import PromoBanner from "@/components/PromoBanner";
+import PromoFloating from "@/components/PromoFloating";
 import { toast } from "sonner";
 
 interface Member {
