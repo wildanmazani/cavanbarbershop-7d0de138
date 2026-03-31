@@ -214,13 +214,18 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {activeTab === "home" && (
         <StampCard
-            memberName={member.full_name}
-            stampsCount={member.stamps_count}
-            onStampAdded={handleStampAdded}
-            onLogout={() => {}}
-            avatarUrl={member.avatar_url}
-          />
+          memberName={member.full_name}
+          stampsCount={member.stamps_count}
+          onStampAdded={handleStampAdded}
+          onLogout={() => {}}
+          avatarUrl={member.avatar_url}
+        />
       )}
+      <PromoFloating
+        title="🎉 New Member Promo!"
+        description="Sign up as a Cavan member and enjoy RM5 OFF any service on your first visit!"
+        highlight="RM5 OFF — Any Service"
+      />
       {activeTab === "favourites" && <FavouritesPage />}
       {activeTab === "loyalty" && (
         <LoyaltyPage
