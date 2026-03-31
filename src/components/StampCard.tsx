@@ -46,7 +46,7 @@ const StampCard = ({ memberName, stampsCount, onStampAdded, avatarUrl }: StampCa
       </div>
 
       {/* Next Reward Banner */}
-      <div className="card-luxury rounded-2xl p-4 mb-6 flex items-center gap-4">
+      <div className="card-luxury next-reward-glow rounded-2xl p-4 mb-6 flex items-center gap-4">
         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
           {MILESTONES[nextMilestone]?.icon}
         </div>

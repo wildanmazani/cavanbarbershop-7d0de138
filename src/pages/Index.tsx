@@ -7,7 +7,7 @@ import BottomNav, { TabKey } from "@/components/BottomNav";
 import ProfilePage from "@/components/ProfilePage";
 import FavouritesPage from "@/components/FavouritesPage";
 import LoyaltyPage from "@/components/LoyaltyPage";
-import PromoBanner from "@/components/PromoBanner";
+import PromoFloating from "@/components/PromoFloating";
 import { toast } from "sonner";
 
 interface Member {
@@ -213,23 +213,19 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {activeTab === "home" && (
-        <>
-          <StampCard
-            memberName={member.full_name}
-            stampsCount={member.stamps_count}
-            onStampAdded={handleStampAdded}
-            onLogout={() => {}}
-            avatarUrl={member.avatar_url}
-          />
-          <div className="px-4 max-w-md mx-auto -mt-24 pb-32">
-            <PromoBanner
-              title="🎉 New Member Promo!"
-              description="Sign up as a Cavan member and enjoy RM5 OFF any service on your first visit!"
-              highlight="RM5 OFF — Any Service"
-            />
-          </div>
-        </>
+        <StampCard
+          memberName={member.full_name}
+          stampsCount={member.stamps_count}
+          onStampAdded={handleStampAdded}
+          onLogout={() => {}}
+          avatarUrl={member.avatar_url}
+        />
       )}
+      <PromoFloating
+        title="🎉 New Member Promo!"
+        description="Sign up as a Cavan member and enjoy RM5 OFF any service on your first visit!"
+        highlight="RM5 OFF — Any Service"
+      />
       {activeTab === "favourites" && <FavouritesPage />}
       {activeTab === "loyalty" && (
         <LoyaltyPage

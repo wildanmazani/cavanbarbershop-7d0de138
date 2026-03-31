@@ -95,4 +95,41 @@
     background: linear-gradient(145deg, hsl(36 30% 95%), hsl(30 25% 92%));
     box-shadow: 0 4px 24px hsl(25 30% 12% / 0.08);
   }
+
+  /* Gold glow around the Next Reward card */
+  .next-reward-glow {
+    box-shadow:
+      0 0 8px hsl(36 70% 50% / 0.25),
+      0 0 20px hsl(36 70% 50% / 0.15),
+      0 0 40px hsl(40 60% 70% / 0.1);
+    border: 1px solid hsl(36 70% 50% / 0.3);
+  }
+
+  /* Promo popup gold glow */
+  .promo-glow {
+    box-shadow:
+      0 0 10px hsl(40 70% 55% / 0.3),
+      0 0 25px hsl(36 70% 50% / 0.2),
+      0 0 50px hsl(40 60% 70% / 0.1),
+      0 4px 20px hsl(25 30% 12% / 0.12);
+    position: relative;
+  }
+
+  /* FAB pulsing gold glow */
+  .promo-fab-glow {
+    animation: fab-pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes fab-pulse {
+    0%, 100% {
+      box-shadow:
+        0 0 6px hsl(36 70% 50% / 0.4),
+        0 0 16px hsl(40 60% 70% / 0.25);
+    }
+    50% {
+      box-shadow:
+        0 0 12px hsl(36 70% 50% / 0.6),
+        0 0 28px hsl(40 60% 70% / 0.35);
+    }
+  }
 }
